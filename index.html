@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fodene Stream</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=DM+Sans:wght@300;400;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Colors */
+      --ink:    #0b0e13;
+      --blue:   #4472C4;
+      --orange: #ED7D31;
+      --gold:   #FFC000;
+      --slate:  #44546A;
+      --lblue:  #5B9BD5;
+      --white:  #ffffff;
+      --cream:  #F5F2ED;
+      --gray:   #8a8f9a;
+
+      /* Type scale */
+      --fs-label:   0.6875rem;                    /* 11px  — labels, tags, nav */
+      --fs-body:    0.875rem;                     /* 14px  — all body copy */
+      --fs-card:    1rem;                         /* 16px  — card headings */
+      --fs-section: clamp(3.5rem, 6.5vw, 6rem);  /* section titles */
+      --lh-body: 1.82;
+      --ls-label: 0.2em;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+      background: var(--ink);
+      color: var(--white);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: difference;
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(255,192,0,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: all 0.12s ease;
+    }
+
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor { width: 20px; height: 20px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      padding: 28px 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      mix-blend-mode: normal;
+    }
+
+    nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(11,14,19,0.9), transparent);
+      pointer-events: none;
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      text-decoration: none;
+      position: relative;
+    }
+
+    .nav-logo em {
+      color: var(--gold);
+      font-style: normal;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+      position: relative;
+    }
+
+    .nav-links a {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 5vw 8vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-text {
+      position: absolute;
+      top: 50%;
+      left: -2vw;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 38vw;
+      line-height: 0.85;
+      color: rgba(255,255,255,0.025);
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: -0.02em;
+      user-select: none;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-tag-dot {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .hero-tag span {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 14vw, 14rem);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-title .t1 { color: var(--white); display: block; }
+
+    .hero-title .t2 {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.25);
+    }
+
+    .hero-bottom {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-top: 48px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-desc {
+      font-size: var(--fs-body);
+      color: var(--gray);
+      line-height: var(--lh-body);
+      max-width: 280px;
+      border-left: 2px solid var(--gold);
+      padding-left: 16px;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    .btn-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--gold);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: var(--fs-label);
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      padding: 18px 36px;
+      text-decoration: none;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(255,192,0,0.35);
+    }
+
+    .btn-main .arrow { transition: transform 0.25s; }
+    .btn-main:hover .arrow { transform: translateX(5px); }
+
+    .hero-scroll {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: var(--fs-label);
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .scroll-bar {
+      width: 40px; height: 1px;
+      background: rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-bar::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      width: 40%;
+      height: 100%;
+      background: var(--gold);
+      animation: scanline 2s ease-in-out infinite;
+    }
+
+    @keyframes scanline {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(350%); }
+    }
+
+    /* ── MARQUEE ── */
+    .ticker {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 18px 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .ticker-track {
+      display: flex;
+      animation: ticker 25s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      padding: 0 28px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .ticker-item.highlight { color: var(--gold); }
+
+    .ticker-sep {
+      width: 4px; height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 140px 5vw; position: relative; }
+
+    .s-label {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .s-label::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--gold);
+    }
+
+    /* ── VALUE ── */
+    #value {
+      background: var(--ink);
+    }
+
+    .value-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: end;
+      margin-bottom: 80px;
+    }
+
+    @media (max-width: 768px) {
+      .value-header { grid-template-columns: 1fr; }
+    }
+
+    .value-h-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-section);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+
+    .value-h-title span { color: var(--gold); }
+
+    .value-h-desc {
+      font-size: var(--fs-body);
+      color: var(--gray);
+      line-height: var(--lh-body);
+      max-width: 360px;
+    }
+
+    .value-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 900px) {
+      .value-cards { grid-template-columns: 1fr; }
+    }
+
+    .v-card {
+      background: var(--ink);
+      padding: 52px 44px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.35s;
+    }
+
+    .v-card:hover { background: #111620; }
+
+    .v-card-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 7rem;
+      line-height: 1;
+      color: rgba(255,255,255,0.03);
+      position: absolute;
+      bottom: -10px; right: 16px;
+      letter-spacing: -0.02em;
+      transition: color 0.35s;
+    }
+
+    .v-card:hover .v-card-num { color: rgba(255,192,0,0.06); }
+
+    .v-card-tag {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .v-card h3 {
+      font-size: var(--fs-card);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .v-card p { font-size: var(--fs-body); color: var(--gray); line-height: var(--lh-body); }
+
+    .v-card-line {
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 28px;
+      transition: width 0.5s ease;
+    }
+
+    .v-card:hover .v-card-line { width: 40px; }
+
+    /* ── SERVICES ── */
+    #services {
+      background: #0a1018;
+      color: var(--white);
+    }
+
+    .svc-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 64px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .svc-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-section);
+      line-height: 0.95;
+      color: var(--white);
+    }
+
+    .svc-title span { color: var(--gold); }
+
+    .svc-sub {
+      font-size: var(--fs-body);
+      color: var(--gray);
+      line-height: var(--lh-body);
+      max-width: 300px;
+    }
+
+    .svc-list { display: flex; flex-direction: column; }
+
+    .svc-item {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      align-items: center;
+      gap: 40px;
+      padding: 40px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      cursor: default;
+      transition: padding 0.3s;
+      position: relative;
+    }
+
+    .svc-item:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+
+    .svc-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--blue);
+      transform: scaleX(0);
+      transform-origin: left;
+      z-index: 0;
+      transition: transform 0.4s cubic-bezier(0.76,0,0.24,1);
+    }
+
+    .svc-item:hover::after { transform: scaleX(1); }
+
+    .svc-item > * { position: relative; z-index: 1; }
+
+    .svc-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-label);
+      letter-spacing: var(--ls-label);
+      color: rgba(255,255,255,0.2);
+      transition: color 0.3s;
+    }
+
+    .svc-item:hover .svc-num { color: rgba(255,255,255,0.4); }
+
+    .svc-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      letter-spacing: 0.03em;
+      color: var(--white);
+      transition: color 0.3s;
+      line-height: 1;
+    }
+
+    .svc-item:hover .svc-name { color: var(--white); }
+
+    .svc-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .svc-tag {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.06);
+      color: var(--gray);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .svc-item:hover .svc-tag {
+      background: rgba(255,255,255,0.15);
+      color: var(--white);
+    }
+
+    @media (max-width: 640px) {
+      .svc-item { grid-template-columns: 48px 1fr; }
+      .svc-tags { display: none; }
+    }
+
+    /* ── STRENGTH ── */
+    #strength { background: var(--ink); }
+
+    .str-header {
+      margin-bottom: 80px;
+    }
+
+    .str-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-section);
+      line-height: 0.95;
+    }
+
+    .str-title span { color: var(--orange); }
+
+    .str-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 640px) {
+      .str-grid { grid-template-columns: 1fr; }
+    }
+
+    .str-card {
+      background: var(--ink);
+      padding: 52px 48px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .str-card:hover { background: #0f1520; }
+
+    .str-card-idx {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-label);
+      letter-spacing: var(--ls-label);
+      color: var(--orange);
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .str-card h3 {
+      font-size: var(--fs-card);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .str-card p { font-size: var(--fs-body); color: var(--gray); line-height: var(--lh-body); }
+
+    .str-card-arrow {
+      position: absolute;
+      bottom: 32px; right: 36px;
+      font-size: 1.4rem;
+      color: rgba(255,255,255,0.08);
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .str-card:hover .str-card-arrow {
+      color: var(--orange);
+      transform: translate(4px, -4px);
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      background: #0b0e13;
+      padding: 140px 5vw;
+    }
+
+    .about-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 100px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .about-wrap { grid-template-columns: 1fr; gap: 60px; }
+    }
+
+    .about-left {}
+
+    .about-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-section);
+      line-height: 0.9;
+      margin-bottom: 48px;
+    }
+
+    .about-title span { color: var(--gold); }
+
+    .info-row {
+      display: flex;
+      gap: 0;
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .info-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.06); }
+
+    .info-key {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--gray);
+      width: 110px;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    .info-val {
+      font-size: var(--fs-body);
+      color: rgba(255,255,255,0.8);
+      line-height: var(--lh-body);
+    }
+
+    .about-right {}
+
+    .biz-title {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .biz-title::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--gold);
+    }
+
+    .biz-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .biz-card {
+      background: #0b0e13;
+      padding: 36px 32px;
+      transition: background 0.3s;
+    }
+
+    .biz-card:hover { background: #111824; }
+
+    .biz-card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .biz-card h4 {
+      font-size: var(--fs-card);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .biz-card p {
+      font-size: var(--fs-body);
+      color: var(--gray);
+      line-height: var(--lh-body);
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      background: #0a1018;
+      padding: 120px 5vw;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #contact::before {
+      content: 'CONTACT';
+      position: absolute;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22vw;
+      color: rgba(255,255,255,0.03);
+      right: -2vw;
+      bottom: -4vw;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .contact-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+    }
+
+    .contact-label {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .contact-label::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--gold);
+    }
+
+    .contact-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: var(--fs-section);
+      line-height: 0.9;
+      color: var(--white);
+      margin-bottom: 36px;
+    }
+
+    .contact-note {
+      font-size: var(--fs-body);
+      color: var(--gray);
+      margin-bottom: 48px;
+      line-height: var(--lh-body);
+    }
+
+    .btn-dark {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--gold);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: var(--fs-label);
+      letter-spacing: var(--ls-label);
+      text-transform: uppercase;
+      padding: 20px 44px;
+      text-decoration: none;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .btn-dark:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.25);
+    }
+
+    .btn-dark .arrow { transition: transform 0.25s; }
+    .btn-dark:hover .arrow { transform: translateX(6px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #060810;
+      padding: 36px 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .f-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .f-logo em { color: var(--gold); font-style: normal; }
+
+    .f-copy {
+      font-size: var(--fs-label);
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; gap: 32px; }
+    }
+
+    /* ── FLAME CANVAS ── */
+    #flame {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="flame"></canvas>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">FODENE <em>STREAM</em></a>
+  <ul class="nav-links">
+    <li><a href="#value">Value</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#strength">Why Us</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text" aria-hidden="true">FS</div>
+
+  <div class="hero-tag">
+    <div class="hero-tag-dot"></div>
+    <span>Fodene Stream LLC — Est. 2022</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span class="t1">寄り添いを</span>
+    <span class="t2">極める</span>
+  </h1>
+
+  <div class="hero-bottom">
+    <div class="hero-cta reveal">
+      <a href="#services" class="btn-main">
+        Services <span class="arrow">→</span>
+      </a>
+      <div class="hero-scroll">
+        <div class="scroll-bar"></div>
+        Scroll to explore
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item highlight">経営コンサルティング<span class="ticker-sep"></span></span>
+    <span class="ticker-item">HRコンサルティング<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">人材紹介<span class="ticker-sep"></span></span>
+    <span class="ticker-item">アパレル<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">空手道場<span class="ticker-sep"></span></span>
+    <span class="ticker-item">研修・育成<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">採用戦略<span class="ticker-sep"></span></span>
+    <span class="ticker-item">評価制度設計<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">経営コンサルティング<span class="ticker-sep"></span></span>
+    <span class="ticker-item">HRコンサルティング<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">人材紹介<span class="ticker-sep"></span></span>
+    <span class="ticker-item">アパレル<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">空手道場<span class="ticker-sep"></span></span>
+    <span class="ticker-item">研修・育成<span class="ticker-sep"></span></span>
+    <span class="ticker-item highlight">採用戦略<span class="ticker-sep"></span></span>
+    <span class="ticker-item">評価制度設計<span class="ticker-sep"></span></span>
+  </div>
+</div>
+
+<!-- VALUE -->
+<section id="value">
+  <div class="value-header reveal">
+    <div>
+      <p class="s-label">Our Philosophy</p>
+      <h2 class="value-h-title">提供する<br><span>価値</span></h2>
+    </div>
+  </div>
+  <div class="value-cards">
+    <div class="v-card reveal reveal-d1">
+      <span class="v-card-tag">01 — Strategy</span>
+      <div class="v-card-line"></div>
+      <h3>戦略から実行まで<br>一気通貫支援</h3>
+      <p>戦略立案から実行支援までを一貫して行い、実効性の高い変革を実現。現場への定着・運用まで徹底的に伴走します。</p>
+      <div class="v-card-num">01</div>
+    </div>
+    <div class="v-card reveal reveal-d2">
+      <span class="v-card-tag">02 — Integration</span>
+      <div class="v-card-line"></div>
+      <h3>採用×育成×評価<br>統合アプローチ</h3>
+      <p>HR領域の各機能を有機的に連携させ、人材がスムーズに成長・活躍できる「成長サイクル」を構築します。</p>
+      <div class="v-card-num">02</div>
+    </div>
+    <div class="v-card reveal reveal-d3">
+      <span class="v-card-tag">03 — Ownership</span>
+      <div class="v-card-line"></div>
+      <h3>内製化をゴールとした<br>自走支援</h3>
+      <p>ノウハウの移管と内製化を重視し、クライアント様自身で運用・改善できるよう外部依存からの脱却をサポートします。</p>
+      <div class="v-card-num">03</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="svc-header reveal">
+    <div>
+      <p class="s-label">What We Do</p>
+      <h2 class="svc-title">事業<span>領域</span></h2>
+    </div>
+  </div>
+  <div class="svc-list">
+    <div class="svc-item reveal">
+      <span class="svc-num">01</span>
+      <span class="svc-name">経営コンサルティング</span>
+      <div class="svc-tags">
+        <span class="svc-tag">戦略立案</span>
+        <span class="svc-tag">事業開発</span>
+        <span class="svc-tag">BPR</span>
+      </div>
+    </div>
+    <div class="svc-item reveal reveal-d1">
+      <span class="svc-num">02</span>
+      <span class="svc-name">採用・組織コンサルティング</span>
+      <div class="svc-tags">
+        <span class="svc-tag">採用戦略</span>
+        <span class="svc-tag">組織開発</span>
+        <span class="svc-tag">RPO</span>
+      </div>
+    </div>
+    <div class="svc-item reveal reveal-d2">
+      <span class="svc-num">03</span>
+      <span class="svc-name">研修コンサルティング</span>
+      <div class="svc-tags">
+        <span class="svc-tag">評価制度</span>
+        <span class="svc-tag">研修設計</span>
+        <span class="svc-tag">内製化</span>
+      </div>
+    </div>
+    <div class="svc-item reveal reveal-d3">
+      <span class="svc-num">04</span>
+      <span class="svc-name">人材紹介</span>
+      <div class="svc-tags">
+        <span class="svc-tag">有料職業紹介</span>
+      </div>
+    </div>
+    <div class="svc-item reveal reveal-d4">
+      <span class="svc-num">05</span>
+      <span class="svc-name">アパレル事業</span>
+      <div class="svc-tags">
+        <span class="svc-tag">ブランド</span>
+      </div>
+    </div>
+    <div class="svc-item reveal">
+      <span class="svc-num">06</span>
+      <span class="svc-name">空手道場経営</span>
+      <div class="svc-tags">
+        <span class="svc-tag">武道</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRENGTH -->
+<section id="strength">
+  <div class="str-header reveal">
+    <p class="s-label">Why Us</p>
+    <h2 class="str-title">Fodene<br>Streamの<span>強み</span></h2>
+  </div>
+  <div class="str-grid">
+    <div class="str-card reveal">
+      <span class="str-card-idx">01</span>
+      <h3>戦略から実行まで伴走</h3>
+      <p>提案だけで終わらず、現場に入り込み泥臭い実行支援まで担当。最終的な内製化まで見据えて伴走します。</p>
+      <div class="str-card-arrow">↗</div>
+    </div>
+    <div class="str-card reveal reveal-d1">
+      <span class="str-card-idx">02</span>
+      <h3>採用×制度×育成の統合設計</h3>
+      <p>採用要件と評価制度・研修内容を一貫させることで、入社後の活躍と定着を最大化する仕組みを作ります。</p>
+      <div class="str-card-arrow">↗</div>
+    </div>
+    <div class="str-card reveal reveal-d2">
+      <span class="str-card-idx">03</span>
+      <h3>データ/現場起点の実装力</h3>
+      <p>データに基づいた意思決定と現場の実態に即した運用フローの構築で、形骸化しない制度を実現します。</p>
+      <div class="str-card-arrow">↗</div>
+    </div>
+    <div class="str-card reveal reveal-d3">
+      <span class="str-card-idx">04</span>
+      <h3>豊富なネットワーク</h3>
+      <p>採用媒体30以上・エージェント50社以上・HRテック10以上の運用実績から最適なプランを即座に提案できます。</p>
+      <div class="str-card-arrow">↗</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-wrap">
+    <div class="about-left reveal">
+      <p class="s-label">Company</p>
+      <h2 class="about-title">会社<span>概要</span></h2>
+      <div class="info-row">
+        <span class="info-key">会社名</span>
+        <span class="info-val">合同会社Fodene Stream</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">所在地</span>
+        <span class="info-val">東京都新宿区新宿5丁目14番12号<br>天翔オフィス新宿3丁目406号室</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">設立</span>
+        <span class="info-val">2022年3月</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">代表者</span>
+        <span class="info-val">中原 康之祐</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">許可番号</span>
+        <span class="info-val">有料職業紹介事業<br>許可番号 13-ユ-31518</span>
+      </div>
+    </div>
+
+    <div class="about-right reveal reveal-d2">
+      <p class="biz-title">事業ポートフォリオ</p>
+      <div class="biz-grid">
+        <div class="biz-card">
+          <span class="biz-card-icon">📊</span>
+          <h4>経営・HRコンサル</h4>
+          <p>採用・組織・評価制度を一気通貫で支援</p>
+        </div>
+        <div class="biz-card">
+          <span class="biz-card-icon">🎓</span>
+          <h4>研修・育成</h4>
+          <p>研修設計から内製化まで一貫サポート</p>
+        </div>
+        <div class="biz-card">
+          <span class="biz-card-icon">🤝</span>
+          <h4>人材紹介</h4>
+          <p>業界特化型の転職支援サービス</p>
+        </div>
+        <div class="biz-card">
+          <span class="biz-card-icon">👘</span>
+          <h4>アパレル事業</h4>
+          <p>ブランド運営・店舗経営</p>
+        </div>
+        <div class="biz-card">
+          <span class="biz-card-icon">🥋</span>
+          <h4>空手道場</h4>
+          <p>武道を通じた地域・人材育成</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner reveal">
+    <p class="contact-label">Contact Us</p>
+    <h2 class="contact-title">まずは<br>ご相談を</h2>
+    <p class="contact-note">採用・組織・評価制度から、その他事業に関するご相談まで、<br>お気軽にお問い合わせください。</p>
+    <a href="mailto:kohnosuke.n@fodene.jp" class="btn-dark">
+      メールでお問い合わせ <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">FODENE <em>STREAM</em></div>
+  <div class="f-copy">© 2022 合同会社Fodene Stream ｜ 有料職業紹介事業 許可番号 13-ユ-31518</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  (function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  // ── Blue & Red Flame ──
+  (function() {
+    const canvas = document.getElementById('flame');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const SOURCES = 6;
+    const PARTICLES = 200;
+
+    class Particle {
+      constructor() { this.init(true); }
+      init(randomStart) {
+        const si = Math.floor(Math.random() * SOURCES);
+        const spread = canvas.width / SOURCES;
+        this.x       = spread * si + spread * 0.5 + (Math.random() - 0.5) * spread * 0.9;
+        this.y       = canvas.height + 10;
+        this.vx      = (Math.random() - 0.5) * 1.2;
+        this.vy      = -(Math.random() * 2.8 + 1.6);
+        this.life    = randomStart ? Math.random() * 100 : 0;
+        this.maxLife = Math.random() * 90 + 70;
+        this.r       = Math.random() * 55 + 30;
+        this.type    = Math.random() < 0.5 ? 'blue' : 'red';
+      }
+      update() {
+        this.x  += this.vx + Math.sin(this.life * 0.07 + this.x * 0.01) * 0.9;
+        this.y  += this.vy;
+        this.vy *= 0.988;
+        this.life++;
+        if (this.life >= this.maxLife) this.init(false);
+      }
+      draw() {
+        const t = this.life / this.maxLife;
+        const a = t < 0.25 ? t / 0.25 : 1 - (t - 0.25) / 0.75;
+        const r = this.r * (1 - t * 0.45);
+        const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
+
+        if (this.type === 'blue') {
+          if (t < 0.18) {
+            g.addColorStop(0,    `rgba(210,230,255,${a * 0.9})`);
+            g.addColorStop(0.35, `rgba(120,180,255,${a * 0.55})`);
+            g.addColorStop(1,    `rgba(68,114,196,0)`);
+          } else if (t < 0.55) {
+            g.addColorStop(0,    `rgba(130,185,255,${a * 0.7})`);
+            g.addColorStop(0.4,  `rgba(68,114,196,${a * 0.4})`);
+            g.addColorStop(1,    `rgba(30,60,150,0)`);
+          } else {
+            g.addColorStop(0,    `rgba(68,114,196,${a * 0.35})`);
+            g.addColorStop(0.5,  `rgba(40,80,180,${a * 0.15})`);
+            g.addColorStop(1,    `rgba(20,40,120,0)`);
+          }
+        } else {
+          if (t < 0.18) {
+            g.addColorStop(0,    `rgba(255,240,200,${a * 0.9})`);
+            g.addColorStop(0.35, `rgba(255,160,60,${a * 0.6})`);
+            g.addColorStop(1,    `rgba(237,125,49,0)`);
+          } else if (t < 0.55) {
+            g.addColorStop(0,    `rgba(255,120,40,${a * 0.7})`);
+            g.addColorStop(0.4,  `rgba(200,50,20,${a * 0.4})`);
+            g.addColorStop(1,    `rgba(150,20,10,0)`);
+          } else {
+            g.addColorStop(0,    `rgba(180,30,10,${a * 0.35})`);
+            g.addColorStop(0.5,  `rgba(120,15,5,${a * 0.15})`);
+            g.addColorStop(1,    `rgba(80,0,0,0)`);
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+      }
+    }
+
+    const particles = Array.from({ length: PARTICLES }, () => new Particle());
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(loop);
+    }
+    loop();
+  })();
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
