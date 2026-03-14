@@ -701,9 +701,21 @@
     .biz-card:hover { background: #111824; }
 
     .biz-card-icon {
-      font-size: 1.6rem;
+      width: 36px;
+      height: 36px;
       margin-bottom: 16px;
       display: block;
+      color: var(--gold);
+    }
+
+    .biz-card-icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .biz-card h4 {
@@ -1139,27 +1151,37 @@
       <p class="biz-title">事業ポートフォリオ</p>
       <div class="biz-grid">
         <div class="biz-card">
-          <span class="biz-card-icon">📊</span>
+          <span class="biz-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 3h18v4H3z"/><path d="M3 10h12v4H3z"/><path d="M3 17h7v4H3z"/><path d="M19 14v6M16 17h6"/></svg>
+          </span>
           <h4>経営・HRコンサル</h4>
           <p>採用・組織・評価制度を一気通貫で支援</p>
         </div>
         <div class="biz-card">
-          <span class="biz-card-icon">🎓</span>
+          <span class="biz-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </span>
           <h4>研修・育成</h4>
           <p>研修設計から内製化まで一貫サポート</p>
         </div>
         <div class="biz-card">
-          <span class="biz-card-icon">🤝</span>
+          <span class="biz-card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 21c0-3.3 3.1-6 7-6s7 2.7 7 6"/><path d="M17 14c2.2.4 4 2.1 4 4.5"/></svg>
+          </span>
           <h4>人材紹介</h4>
           <p>業界特化型の転職支援サービス</p>
         </div>
         <div class="biz-card">
-          <span class="biz-card-icon">👘</span>
+          <span class="biz-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+          </span>
           <h4>アパレル事業</h4>
           <p>ブランド運営・店舗経営</p>
         </div>
         <div class="biz-card">
-          <span class="biz-card-icon">🥋</span>
+          <span class="biz-card-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="M12 6v5l-3 3"/><path d="M12 11l3 3"/><path d="M7 20l2-5"/><path d="M17 20l-2-5"/><path d="M9 15h6"/></svg>
+          </span>
           <h4>空手道場</h4>
           <p>武道を通じた地域・人材育成</p>
         </div>
